@@ -1,6 +1,4 @@
-Here's the Jest test code for the Login component based on the provided test cases:
 
-```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -111,6 +109,4 @@ describe('Login component', () => {
     });
   });
 });
-```
-
 This test suite covers all the specified test cases, including rendering, form submission, input validation, latency, throughput, and connection pooling. It uses Jest and React Testing Library to simulate user interactions and test the component's behavior.
