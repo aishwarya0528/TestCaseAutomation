@@ -1,6 +1,4 @@
-Here's the Jest test code for the Login component based on the provided information and requirements:
 
-```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -288,6 +286,4 @@ describe('Login component', () => {
     jest.useRealTimers();
   });
 });
-```
-
 This test suite covers all the existing test cases for rendering, input functionality, login functionality, and form submission, as well as the new test cases for latency, throughput, and connection polling. The tests use Jest and React Testing Library, mock API calls where necessary, and utilize Jest's timer mocks for time-sensitive tests.
