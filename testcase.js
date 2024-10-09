@@ -1,4 +1,6 @@
+Here's the Jest test code for the Login component based on the provided information and requirements:
 
+```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -212,4 +214,80 @@ describe('Login component', () => {
       expect(mockSubmit).toHaveBeenCalledTimes(1);
     });
   });
+
+  test('Latency: Measures response time of login request', async () => {
+    jest.useFakeTimers();
+    const mockSubmit = jest.fn(() => new Promise(resolve => setTimeout(resolve, 1000)));
+    render(<Login onSubmit={mockSubmit} />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    const startTime = Date.now();
+    fireEvent.click(submitButton);
+    jest.runAllTimers();
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled();
+    });
+    const endTime = Date.now();
+    const latency = endTime - startTime;
+    expect(latency).toBeLessThan(1500);
+    jest.useRealTimers();
+  });
+
+  test('Throughput: Handles multiple login requests in a given time frame', async () => {
+    jest.useFakeTimers();
+    const mockSubmit = jest.fn(() => new Promise(resolve => setTimeout(resolve, 100)));
+    render(<Login onSubmit={mockSubmit} />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    const startTime = Date.now();
+    for (let i = 0; i < 10; i++) {
+      fireEvent.click(submitButton);
+    }
+    jest.runAllTimers();
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalledTimes(10);
+    });
+    const endTime = Date.now();
+    const totalTime = endTime - startTime;
+    expect(totalTime).toBeLessThan(2000);
+    jest.useRealTimers();
+  });
+
+  test('Connection Polling: Handles connection polling for login status', async () => {
+    jest.useFakeTimers();
+    const mockCheckStatus = jest.fn()
+      .mockResolvedValueOnce({ status: 'pending' })
+      .mockResolvedValueOnce({ status: 'pending' })
+      .mockResolvedValueOnce({ status: 'success' });
+    render(<Login checkLoginStatus={mockCheckStatus} />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.click(submitButton);
+    jest.advanceTimersByTime(1000);
+    await waitFor(() => {
+      expect(mockCheckStatus).toHaveBeenCalledTimes(1);
+    });
+    jest.advanceTimersByTime(1000);
+    await waitFor(() => {
+      expect(mockCheckStatus).toHaveBeenCalledTimes(2);
+    });
+    jest.advanceTimersByTime(1000);
+    await waitFor(() => {
+      expect(mockCheckStatus).toHaveBeenCalledTimes(3);
+      expect(screen.getByText(/login successful/i)).toBeInTheDocument();
+    });
+    jest.useRealTimers();
+  });
 });
+```
+
+This test suite covers all the existing test cases for rendering, input functionality, login functionality, and form submission, as well as the new test cases for latency, throughput, and connection polling. The tests use Jest and React Testing Library, mock API calls where necessary, and utilize Jest's timer mocks for time-sensitive tests.
