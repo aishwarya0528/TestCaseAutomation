@@ -1,6 +1,4 @@
-Here's the Jest test code for the Login component based on the provided test cases:
 
-```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -215,4 +213,3 @@ describe('Login component', () => {
     });
   });
 });
-```
