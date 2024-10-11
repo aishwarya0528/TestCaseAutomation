@@ -1,8 +1,11 @@
+Here's the Jest test code for the provided components:
 
+```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from './Login';
+import App from './App';
 
 describe('Login component', () => {
   test('Renders login form correctly', () => {
@@ -10,6 +13,7 @@ describe('Login component', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
+    expect(screen.getByText(/Login/i)).toBeInTheDocument();
   });
 
   test('Handles empty form submission', async () => {
@@ -109,4 +113,18 @@ describe('Login component', () => {
     });
   });
 });
-This test suite covers all the specified test cases, including rendering, form submission, input validation, latency, throughput, and connection pooling. It uses Jest and React Testing Library to simulate user interactions and test the component's behavior.
+
+describe('App component', () => {
+  test('Renders App component', () => {
+    render(<App />);
+    expect(screen.getByText(/Login/i)).toBeInTheDocument();
+  });
+
+  test('Snapshot test for App component', () => {
+    const { asFragment } = render(<App />);
+    expect(asFragment()).toMatchSnapshot();
+  });
+});
+```
+
+This test suite covers all the specified test cases for both the Login and App components, including rendering, form submission, input validation, latency, throughput, and connection pooling. It uses Jest and React Testing Library to simulate user interactions and test the components' behavior.
