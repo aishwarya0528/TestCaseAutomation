@@ -1,6 +1,3 @@
-Here's the Jest test code for the provided components:
-
-```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -125,6 +122,3 @@ describe('App component', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 });
-```
-
-This test suite covers all the specified test cases for both the Login and App components, including rendering, form submission, input validation, latency, throughput, and connection pooling. It uses Jest and React Testing Library to simulate user interactions and test the components' behavior.
