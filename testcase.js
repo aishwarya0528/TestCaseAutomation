@@ -1,6 +1,3 @@
-Here's the Jest test code based on the provided structure and requirements:
-
-```javascript
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -294,6 +291,3 @@ describe('Performance Tests', () => {
     jest.useRealTimers();
   });
 });
-```
-
-This Jest test code covers all the categories and test cases specified in the provided structure. It includes tests for rendering, input validation, form submission, state management, user interaction, accessibility, edge cases, error handling, and performance. The tests are written using React Testing Library and follow best practices for testing React components.
