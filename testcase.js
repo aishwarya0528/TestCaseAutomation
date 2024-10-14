@@ -1,6 +1,4 @@
-Here's the Jest test code for the Login component based on the provided test cases:
 
-```javascript
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import Login from './Login';
@@ -117,4 +115,3 @@ describe('Login Component', () => {
     expect(screen.getByLabelText(/password/i).value).toBe(specialChars);
   });
 });
-```
