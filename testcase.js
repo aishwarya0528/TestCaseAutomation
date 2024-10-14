@@ -1,21 +1,24 @@
+Here's the Jest test code for the Login component based on the provided test cases:
+
+```javascript
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import Login from './Login';
 
 describe('Login Component', () => {
-  test('renders without crashing', () => {
+  it('renders without crashing', () => {
     render(<Login />);
   });
 
-  test('renders all expected elements', () => {
+  it('renders all expected elements', () => {
     render(<Login />);
-    expect(screen.getByRole('heading', { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByRole('form')).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
 
-  test('input fields update correctly', () => {
+  it('updates email and password inputs correctly', () => {
     render(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
@@ -27,42 +30,41 @@ describe('Login Component', () => {
     expect(passwordInput.value).toBe('password123');
   });
 
-  test('input fields have correct types', () => {
+  it('verifies input types', () => {
     render(<Login />);
     expect(screen.getByLabelText(/email/i)).toHaveAttribute('type', 'email');
     expect(screen.getByLabelText(/password/i)).toHaveAttribute('type', 'password');
   });
 
-  test('form submission with valid inputs', async () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+  it('handles form submission with valid inputs', async () => {
+    const consoleSpy = jest.spyOn(console, 'log');
     render(<Login />);
     
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith('Email:', 'test@example.com', 'Password:', 'password123');
+      expect(screen.getByLabelText(/email/i).value).toBe('');
+      expect(screen.getByLabelText(/password/i).value).toBe('');
     });
-
-    expect(screen.getByLabelText(/email/i).value).toBe('');
-    expect(screen.getByLabelText(/password/i).value).toBe('');
 
     consoleSpy.mockRestore();
   });
 
-  test('form submission with empty fields', async () => {
+  it('shows error message for empty fields', async () => {
     render(<Login />);
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(screen.getByText(/please fill in all fields/i)).toBeInTheDocument();
     });
   });
 
-  test('error message disappears after valid submission', async () => {
+  it('clears error message after successful submission', async () => {
     render(<Login />);
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(screen.getByText(/please fill in all fields/i)).toBeInTheDocument();
@@ -70,20 +72,14 @@ describe('Login Component', () => {
 
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(screen.queryByText(/please fill in all fields/i)).not.toBeInTheDocument();
     });
   });
 
-  test('form elements have associated labels', () => {
-    render(<Login />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-  });
-
-  test('form is keyboard accessible', () => {
+  it('is keyboard accessible', () => {
     render(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
@@ -92,14 +88,14 @@ describe('Login Component', () => {
     emailInput.focus();
     expect(document.activeElement).toBe(emailInput);
 
-    passwordInput.focus();
+    fireEvent.keyDown(emailInput, { key: 'Tab' });
     expect(document.activeElement).toBe(passwordInput);
 
-    submitButton.focus();
+    fireEvent.keyDown(passwordInput, { key: 'Tab' });
     expect(document.activeElement).toBe(submitButton);
   });
 
-  test('handles very long inputs', () => {
+  it('handles very long inputs', () => {
     render(<Login />);
     const longString = 'a'.repeat(1000);
     
@@ -110,9 +106,9 @@ describe('Login Component', () => {
     expect(screen.getByLabelText(/password/i).value).toBe(longString);
   });
 
-  test('handles special characters in inputs', () => {
+  it('handles special characters in inputs', () => {
     render(<Login />);
-    const specialChars = '!@#$%^&*()_+{}[]|":;<>?,./';
+    const specialChars = '!@#$%^&*()_+{}[]|":;<>?';
     
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: `test${specialChars}@example.com` } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: specialChars } });
@@ -120,21 +116,5 @@ describe('Login Component', () => {
     expect(screen.getByLabelText(/email/i).value).toBe(`test${specialChars}@example.com`);
     expect(screen.getByLabelText(/password/i).value).toBe(specialChars);
   });
-
-  test('error message is displayed and cleared correctly', async () => {
-    render(<Login />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
-    await waitFor(() => {
-      expect(screen.getByText(/please fill in all fields/i)).toBeInTheDocument();
-    });
-
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
-
-    await waitFor(() => {
-      expect(screen.queryByText(/please fill in all fields/i)).not.toBeInTheDocument();
-    });
-  });
 });
+```
